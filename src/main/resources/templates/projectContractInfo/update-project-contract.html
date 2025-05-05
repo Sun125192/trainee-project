@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	th:href="@{/css/style-filter-and-add-project-contract.css}" />
+<title>Update Project/Contract</title>
+</head>
+
+<body>
+	<div class="container-fluid mt-2">
+		<div class="form-container">
+			<div class="card-header">
+				<h4 class="mb-0 d-flex align-items-center">
+					<img th:src="@{/img/xfce4-session_system-log-out.png}" alt="" /> <span
+						class="header">Update Project/Contract...</span>
+				</h4>
+			</div>
+			<div class="card px-3 py-3">
+				<div class="card-body solid py-3">
+					<form id="projectForm" th:action="@{/contract/update}"
+						th:object="${contractForm}" method="post">
+						<div th:if="${successMessage != null}" class="alert alert-warning"
+							role="alert">
+							<span th:text="${successMessage}"></span>
+						</div>
+						<div th:if="${errorMessage != null}" class="alert alert-warning"
+							role="alert">
+							<span th:text="${errorMessage}"></span>
+						</div>
+
+						<input type="hidden" id="contractStatus" value="active" />
+
+						<div class="row col-12">
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label for="contractNumber" class="col-sm-5 col-form-label">Contract
+										Number<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<input class="form-control" type="text" id="contractNumber"
+											name="contractNumber" th:value="*{contractNumber}"
+											th:field="*{contractNumber}" maxlength="20"/>
+										<!-- Hiển thị lỗi -->
+										<label id="contractNumber-error" class="error m-0"
+											for="contractNumber"
+											th:if="${#fields.hasErrors('contractNumber')}"
+											th:errors="*{contractNumber}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="airlineCode" class="col-sm-4 col-form-label">Airline
+										Code<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<select id="airlineCode" name="airlineCode"
+											class="form-control" th:value="*{airlineCode}"
+											th:field="*{airlineCode}">
+											<option th:each="airline : ${listAirlines}"
+												th:value="${airline.code}"
+												th:text="${airline.code + ' - ' + airline.name}"
+												th:selected="${airline.code == contractForm.airlineCode}"></option>
+										</select>
+										<!-- Hiển thị lỗi -->
+										<label id="airlineCode-error" class="error" for="airlineCode"
+											th:if="${#fields.hasErrors('airlineCode')}"
+											th:errors="*{airlineCode}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="importantLevel" class="col-sm-8 col-form-label">Important
+										Level<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<select id="importantLevel" name="importantLevel"
+											class="form-control" th:value="*{importantLevel}"
+											th:field="*{importantLevel}">
+											<option value="Normal"
+												th:selected="${contractForm.importantLevel == 'Normal'}">Normal</option>
+											<option value="Urgent"
+												th:selected="${contractForm.importantLevel == 'Urgent'}">Urgent</option>
+										</select>
+										<!-- Hiển thị lỗi -->
+										<label id="importantLevel-error" class="error"
+											for="importantLevel"
+											th:if="${#fields.hasErrors('importantLevel')}"
+											th:errors="*{importantLevel}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="region" class="col-sm-4 col-form-label">Region<span
+										class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<select id="region" name="region" class="form-control"
+											th:value="*{region}" th:field="*{region}">
+											<option th:each="region : ${listRegions}"
+												th:value="${region.code}" th:text="${region.name}"
+												th:selected="${region.code.equals(contractForm.region)}"></option>
+										</select>
+										<!-- Hiển thị lỗi -->
+										<label id="region-error" class="error" for="region"
+											th:if="${#fields.hasErrors('region')}"
+											th:errors="*{importantLevel}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="dateReceived" class="col-sm-6 col-form-label">Date
+										Received (dd/mm/yyyy)<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<input type="date" id="dateReceived" name="dateReceived"
+											class="form-control" th:value="*{dateReceived}"
+											th:field="*{dateReceived}" />
+									</div>
+									<div class="col-12 d-flex justify-content-end">
+										<!-- Hiển thị lỗi -->
+										<label id="dateReceived-error" class="error m-0"
+											for="dateReceived"
+											th:if="${#fields.hasErrors('dateReceived')}"
+											th:errors="*{dateReceived}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="discontinueDate" class="col-sm-6 col-form-label">Discontinue
+										Date (dd/mm/yyyy)<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<input type="date" id="discontinueDate" name="discontinueDate"
+											class="form-control" th:value="*{discontinueDate}"
+											th:field="*{discontinueDate}" />
+										<!-- Hiển thị lỗi -->
+										<label id="discontinueDate-error" class="error"
+											for="discontinueDate"
+											th:if="${#fields.hasErrors('discontinueDate')}"
+											th:errors="*{discontinueDate}"></label>
+									</div>
+									<div class="col-12 d-flex justify-content-end">
+										<label id="discontinueDate-error" class="error m-0"
+											for="discontinueDate"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="numberOfFareSheets" class="col-sm-6 col-form-label">Number
+										of Fare Sheets<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm d-flex flex-column align-items-end">
+										<input type="number" id="numberOfFareSheets"
+											name="numberOfFareSheets" class="form-control custom-input"
+											maxlength="3" th:value="*{numberOfFareSheets}"
+											th:field="*{numberOfFareSheets}" />
+										<!-- Hiển thị lỗi -->
+										<label id="numberOfFareSheets-error" class="error m-0"
+											for="numberOfFareSheets"
+											th:if="${#fields.hasErrors('numberOfFareSheets')}"
+											th:errors="*{numberOfFareSheets}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="rtgsActual" class="col-sm-6 col-form-label">Rtgs
+										Actual<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm d-flex flex-column align-items-end">
+										<input type="number" id="rtgsActual" name="rtgsActual"
+											class="form-control custom-input" maxlength="5"
+											th:value="*{rtgsActual}" th:field="*{rtgsActual}" /> <label
+											id="rtgsActual-error" class="error m-0" for="rtgsActual"></label>
+
+										<!-- Hiển thị lỗi -->
+										<label id="rtgsActual-error" class="error m-0"
+											for="rtgsActual" th:if="${#fields.hasErrors('rtgsActual')}"
+											th:errors="*{rtgsActual}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="numberOfRules" class="col-sm-6 col-form-label">Number
+										Of Rules<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm d-flex flex-column align-items-end">
+										<input type="number" id="numberOfRules" name="numberOfRules"
+											class="form-control custom-input" maxlength="3"
+											th:value="*{numberOfRules}" th:field="*{numberOfRules}" />
+										<!-- Hiển thị lỗi -->
+										<label id="numberOfRules-error" class="error m-0"
+											for="numberOfRules"
+											th:if="${#fields.hasErrors('numberOfRules')}"
+											th:errors="*{numberOfRules}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="queuingStartDate" class="col-sm-7 col-form-label">Queuing
+										Start Date (dd/mm/yyyy)<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<input type="date" id="queuingStartDate"
+											name="queuingStartDate" class="form-control"
+											th:value="*{queuingStartDate}" th:field="*{queuingStartDate}"
+											readonly />
+										<!-- Hiển thị lỗi -->
+										<label id="queuingStartDate-error" class="error"
+											for="queuingStartDate"
+											th:if="${#fields.hasErrors('queuingStartDate')}"
+											th:errors="*{queuingStartDate}"></label>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group row">
+									<label for="contractName" class="col-sm-5 col-form-label">Contract
+										Name<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<input type="text" id="contractName" name="contractName"
+											class="form-control" th:value="*{contractName}"
+											th:field="*{contractName}" />
+										<!-- Hiển thị lỗi -->
+										<label id="contractName-error" class="error m-0"
+											for="contractName"
+											th:if="${#fields.hasErrors('contractName')}"
+											th:errors="*{contractName}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="countryCode" class="col-sm-3 col-form-label">Market<span
+										class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<select id="countryCode" name="countryCode" class="form-control"
+											th:value="*{countryCode}" th:field="*{countryCode}">
+											<option th:each="market : ${listCountries}"
+												th:value="${market.countryCode}" th:text="${market.name}"
+												th:selected="${market.countryCode == contractForm.countryCode}"></option>
+										</select>
+										<!-- Hiển thị lỗi -->
+										<label id="countryCode-error" class="error" for="countryCode"
+											th:if="${#fields.hasErrors('countryCode')}"
+											th:errors="*{countryCode}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="priority" class="col-sm-4 col-form-label">Priority<span
+										class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<select id="priority" name="priority" class="form-control"
+											th:value="*{priority}" th:field="*{priority}">
+											<option th:each="priority : ${listPriorities}"
+												th:value="${priority.code}" th:text="${priority.name}"
+												th:selected="${priority.code == contractForm.priority}"></option>
+										</select>
+										<!-- Hiển thị lỗi -->
+										<label id="priority-error" class="error" for="priority"
+											th:if="${#fields.hasErrors('priority')}"
+											th:errors="*{priority}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="fareType" class="col-sm-4 col-form-label">Fare
+										Type<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<select id="fareType" name="fareType" class="form-control"
+											th:value="*{fareType}" th:field="*{fareType}">
+											<option th:each="fareType : ${listFareTypes}"
+												th:value="${fareType.code}" th:text="${fareType.name}"
+												th:selected="${fareType.code == contractForm.fareType}"></option>
+										</select>
+										<!-- Hiển thị lỗi -->
+										<label id="fareType-error" class="error" for="fareType"
+											th:if="${#fields.hasErrors('fareType')}"
+											th:errors="*{fareType}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="effectiveDate" class="col-sm-6 col-form-label">Effective
+										Date (dd/mm/yyyy)<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm">
+										<input type="date" id="effectiveDate" name="effectiveDate"
+											class="form-control" th:value="*{effectiveDate}"
+											th:field="*{effectiveDate}" />
+										<!-- Hiển thị lỗi -->
+										<label id="effectiveDate-error" class="error"
+											for="effectiveDate"
+											th:if="${#fields.hasErrors('effectiveDate')}"
+											th:errors="*{effectiveDate}"></label>
+									</div>
+									<div class="col-12 d-flex justify-content-end">
+										<label id="effectiveDate-error" class="error m-0"
+											for="effectiveDate"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="dateClarification"
+										class="col-sm-6 col-form-label pr-0">Date
+										Clarification Cleared (dd/mm/yyyy)<span class="text-danger">*</span>
+										:
+									</label>
+									<div class="col-sm">
+										<input type="date" id="dateClarificationCleared"
+											name="dateClarificationCleared" class="form-control"
+											th:value="*{dateClarificationCleared}"
+											th:field="*{dateClarificationCleared}" />
+										<!-- Hiển thị lỗi -->
+										<label id="dateClarificationCleared-error" class="error"
+											for="dateClarificationCleared"
+											th:if="${#fields.hasErrors('dateClarificationCleared')}"
+											th:errors="*{dateClarificationCleared}"></label>
+									</div>
+									<div class="col-12 d-flex justify-content-end">
+										<label id="dateClarification-error" class="error m-0"
+											for="dateClarification"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="numberOfFares" class="col-sm-6 col-form-label">Number
+										of Fares<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm d-flex flex-column align-items-end">
+										<input type="number" id="numberOfFares" name="numberOfFares"
+											class="form-control custom-input" maxlength="5"
+											th:value="*{numberOfFares}" th:field="*{numberOfFares}" />
+										<!-- Hiển thị lỗi -->
+										<label id="numberOfFares-error" class="error m-0"
+											for="numberOfFares"
+											th:if="${#fields.hasErrors('numberOfFares')}"
+											th:errors="*{numberOfFares}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="rtgsRecords" class="col-sm-6 col-form-label">Rtgs
+										Records<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm d-flex flex-column align-items-end">
+										<input type="number" id="rtgsRecords" name="rtgsRecords"
+											class="form-control custom-input" maxlength="5"
+											th:value="*{rtgsRecords}" th:field="*{rtgsRecords}" />
+										<!-- Hiển thị lỗi -->
+										<label id="rtgsRecords-error" class="error m-0"
+											for="rtgsRecords" th:if="${#fields.hasErrors('rtgsRecords')}"
+											th:errors="*{rtgsRecords}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="totalRecords" class="col-sm-6 col-form-label">Total
+										Records<span class="text-danger">*</span> :
+									</label>
+									<div class="col-sm d-flex flex-column align-items-end">
+										<input type="number" id="totalRecords" name="totalRecords"
+											class="form-control custom-input" maxlength="8" readonly
+											th:value="*{totalRecords}" th:field="*{totalRecords}" />
+										<!-- Hiển thị lỗi -->
+										<label id="totalRecords-error" class="error m-0"
+											for="totalRecords"
+											th:if="${#fields.hasErrors('totalRecords')}"
+											th:errors="*{totalRecords}"></label>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="queuingEndDate" class="col-sm-7 col-form-label">Queuing
+										End Date (dd/mm/yyyy) :</label>
+									<div class="col-sm">
+										<input type="date" id="queuingEndDate" name="queuingEndDate"
+											class="form-control date-input" th:value="*{queuingEndDate}"
+											th:field="*{queuingEndDate}" readonly />
+										<!-- Hiển thị lỗi -->
+										<label id="queuingEndDate-error" class="error"
+											for="queuingEndDate"
+											th:if="${#fields.hasErrors('queuingEndDate')}"
+											th:errors="*{queuingEndDate}"></label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row justify-content-center mt-3">
+							<div class="d-flex text-center w-25">
+								<button id="clearButton"
+									class="w-25 rounded custom-btn mr-2 px-3">Clear</button>
+								<button id="updateButton" type="submit"
+									class="w-25 rounded custom-btn mr-2 px-3">Update</button>
+								<button id="cancelButton" type="button"
+									class="w-25 rounded custom-btn mr-2 px-3" onclick="goBack()">
+									Cancel</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+	<script th:src="@{/js/jquery.validate.min.js}"></script>
+	<script th:src="@{/js/update-project-contract.js}"></script>
+	<script th:src="@{/js/form-calculations.js}"></script>
+</body>
+
+</html>

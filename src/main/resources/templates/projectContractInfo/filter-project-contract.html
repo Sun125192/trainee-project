@@ -1,0 +1,277 @@
+<!DOCTYPE html>  
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">  
+
+<head>  
+    <meta charset="UTF-8" />  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+    <!-- Liên kết các file CSS -->  
+    <link rel="stylesheet" th:href="@{/css/fontawesome-free-6.7.2-web/css/all.min.css}">  
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />  
+    <link rel="stylesheet" th:href="@{/css/select2.min.css}" />  
+    <link rel="stylesheet" th:href="@{/css/style-filter-and-add-project-contract.css}" />  
+    <title>List Project/Contract</title>  
+</head>  
+
+<body>  
+    <div class="container-fluid">  
+        <!-- Tiêu đề của trang -->  
+        <div class="card-header">  
+            <h3 class="mb-0 d-flex align-items-center">  
+                <img th:src="@{/img/xfce4-session_system-log-out.png}" alt="" />  
+                <span class="header">List Project/Contract...</span>  
+            </h3>  
+        </div>  
+
+        <!-- Form lọc dữ liệu -->  
+        <div class="card">  
+            <div class="card-body p-0 mt-2">  
+                <form method="post" action="/filter">  
+                    <!-- Hiển thị thông báo thành công nếu có -->  
+                    <div th:if="${successMessage != null}" class="alert alert-warning" role="alert">  
+                        <span th:text="${successMessage}"></span>  
+                    </div>  
+                    <!-- Hiển thị thông báo lỗi nếu có -->  
+                    <div th:if="${errorMessage != null}" class="alert alert-warning" role="alert">  
+                        <span th:text="${errorMessage}"></span>  
+                    </div>  
+                    <div class="col-10 pl-0">  
+                        <!-- Dòng đầu tiên: Lọc theo Market và Airline -->  
+                        <div class="form-row">  
+                            <!-- Lọc theo Market -->  
+                            <div class="form-group col-md-6 pr-3 m-0">  
+                                <div class="form-group row">  
+                                    <label for="market" class="col-sm">Market<span class="text-danger">* </span>:</label>  
+                                    <div class="col-sm-8 input-group">  
+                                        <select class="form-control" id="market" name="market">  
+                                            <option value="" selected></option>  
+                                            <option th:each="counTry : ${countryList}"  
+                                                th:value="${counTry.countryCode}" th:text="${counTry.name}"></option>  
+                                        </select>  
+                                        <label id="market-error" class="error m-0" for="market"></label>  
+                                    </div>  
+                                </div>  
+                            </div>  
+
+                            <!-- Lọc theo Airline -->  
+                            <div class="form-group col-md-6 pl-3 m-0">  
+                                <div class="form-group row">  
+                                    <label for="airline" class="col-sm">Airline<span class="text-danger">* </span>:</label>  
+                                    <div class="col-sm-8 input-group">  
+                                        <select class="form-control" id="airline" name="airline">  
+                                            <option value="" selected></option>  
+                                            <option th:each="airline : ${airlinelist}"  
+                                                th:value="${airline.code}"  
+                                                th:text="${airline.code + ' - ' + airline.name}"></option>  
+                                        </select>  
+                                        <label id="airline-error" class="error m-0" for="airline"></label>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        </div>  
+
+                        <!-- Dòng thứ hai: Lọc theo Contract Number và Fare Type -->  
+                        <div class="form-row">  
+                            <!-- Lọc theo Contract Number -->  
+                            <div class="form-group col-md-6 pr-3 m-0">  
+                                <div class="form-group row">  
+                                    <label for="contractNumber" class="col-sm">Contract Number:</label>  
+                                    <div class="col-sm-8 input-group">  
+                                        <select class="form-control select2" id="contractNumber" name="contractNumber">  
+                                            <option value="" selected></option>  
+                                            <option value="ALL">All</option>  
+                                            <option th:each="contract : ${contractNumbers}"  
+                                                th:value="${contract.contractNumber}"  
+                                                th:text="${contract.contractNumber}"></option>  
+                                        </select>  
+                                    </div>  
+                                </div>  
+                            </div>  
+
+                            <!-- Lọc theo Fare Type -->  
+                            <div class="form-group col-md-6 pl-3 m-0">  
+                                <div class="form-group row">  
+                                    <label for="fareType" class="col-sm">Fare Type:</label>  
+                                    <div class="col-sm-8 input-group">  
+                                        <select class="form-control" id="fareType" name="fareType">  
+                                            <option value="" selected></option>  
+                                            <option value="ALL">All</option>  
+                                            <option th:each="fareType : ${fareTypes}"  
+                                                th:value="${fareType.code}"  
+                                                th:text="${fareType.code + ' - ' + fareType.name}"></option>  
+                                        </select>  
+                                        <label id="fareType-error" class="error m-0" for="fareType"></label>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        </div>  
+
+                        <!-- Dòng thứ ba: Lọc theo ngày -->  
+                        <div class="form-row">  
+                            <!-- Lọc theo Discontinue Date -->  
+                            <div class="form-group col-md-6 pr-3 m-0">  
+                                <div class="form-group row">  
+                                    <label for="discontinueDate" class="col-sm-6">Discontinue Date (dd/mm/yyyy):</label>  
+                                    <div class="col-sm">  
+                                        <input type="date" class="form-control custom-input-2"  
+                                            id="discontinueDate" name="discontinueDate" required />  
+                                    </div>  
+                                    <div class="col-12 d-flex justify-content-end">  
+                                        <label id="discontinueDate-error" class="error m-0" for="discontinueDate"></label>  
+                                    </div>  
+                                </div>  
+                            </div>  
+
+                            <!-- Lọc theo Effective Date -->  
+                            <div class="form-group col-md-6 pl-3 m-0">  
+                                <div class="form-group row">  
+                                    <label for="effectiveDate" class="col-sm-6">Effective Date (dd/mm/yyyy):</label>  
+                                    <div class="col-sm">  
+                                        <input type="date" class="form-control custom-input-2"  
+                                            id="effectiveDate" name="effectiveDate" required />  
+                                        <label id="effectiveDate-error" class="error m-0" for="effectiveDate"></label>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        </div>  
+
+                        <!-- Dòng thứ tư: Lọc theo Date Received -->  
+                        <div class="form-row">  
+                            <div class="form-group col-md-6 pr-3 m-0">  
+                                <div class="form-group row">  
+                                    <label for="dateReceived" class="col-sm-6">Date Received (dd/mm/yyyy):</label>  
+                                    <div class="col-sm">  
+                                        <input type="date" class="form-control custom-input-2"  
+                                            id="dateReceived" name="dateReceived" required />  
+                                        <label id="dateReceived-error" class="error m-0" for="dateReceived"></label>  
+                                    </div>  
+                                </div>  
+                            </div>  
+                        </div>  
+
+                        <!-- Nút Filter và Add -->  
+                        <div class="row">  
+                            <div class="d-flex col-3">  
+                                <button type="submit" name="action" value="filter"  
+                                    class="w-50 rounded custom-btn mr-2">Filter</button>  
+                                <button type="button" name="action" value="add"  
+                                    class="w-50 rounded custom-btn ml-2"  
+                                    onclick="alert('Đang chuyển qua trang thêm mới!');">Add</button>  
+                            </div>  
+                        </div>  
+                    </div>  
+                </form>  
+            </div>  
+
+            <!-- Bảng hiển thị danh sách -->  
+            <table class="table table-bordered mt-4">  
+                <thead>  
+                    <tr>  
+                        <th>Contract Number</th>  
+                        <th>Airline Code</th>  
+                        <th>Market</th>  
+                        <th>Region</th>  
+                        <th>Fare Type</th>  
+                        <th>Date Received</th>  
+                        <th>Effective Date</th>  
+                        <th>Discontinue Date</th>  
+                        <th>Priority</th>  
+                    </tr>  
+                </thead>  
+                <tbody id="tbody">  
+                    <!-- Kiểm tra nếu contractList không có dữ liệu -->  
+                    <tr th:if="${contractList.empty}">  
+                        <td colspan="9" class="text-center">No data found.</td>  
+                    </tr>  
+                    <!-- Dòng dữ liệu từ danh sách contractList -->  
+                    <tr th:each="contract : ${contractList}">  
+                        <td><a th:href="@{'contract/update?contractNumber=' + ${contract.contractNumber}}"  
+                            th:text="${contract.contractNumber}"></a></td>  
+                        <td th:text="${contract.airlineCode}"></td>  
+                        <td th:text="${contract.market}"></td>  
+                        <td th:text="${contract.region}"></td>  
+                        <td th:text="${contract.fareType}"></td>  
+                        <td th:text="${contract.dateReceived}"></td>  
+                        <td th:text="${contract.effectiveDate}"></td>  
+                        <td th:text="${contract.discontinueDate}"></td>  
+                        <td th:text="${contract.priority}"></td>  
+                    </tr>  
+                </tbody>  
+            </table>  
+
+            <!-- Phân trang -->  
+            <div class="row">  
+                <div class="col-12 d-flex justify-content-end">  
+                    <nav aria-label="Page navigation example"  
+                        th:class="${pagination != null && pagination.totalPages == 0 ? 'd-none' : ''}">  
+                        <ul class="pagination">  
+                            <!-- Nút về trang đầu -->  
+                            <li class="page-item"><a class="page-link"  
+                                th:class="${pagination.currentPage == 1 ? 'disabled' : ''}"  
+                                th:href="@{|/list?action=${filter}&page=1&market=${market}&airline=${airline}|}"  
+                                aria-label="First"> <i class="fa-solid fa-backward-step"></i>  
+                            </a></li>  
+
+                            <!-- Nút về trang trước -->  
+                            <li class="page-item"><a class="page-link"  
+                                th:class="${pagination.currentPage == 1 ? 'disabled' : ''}"  
+                                th:href="@{|/list?action=${filter}&page=${pagination.previousPage}&market=${market}&airline=${airline}|}"  
+                                aria-label="Previous"> <i class="fa-solid fa-backward"></i>  
+                            </a></li>  
+
+                            <!-- Kiểm tra nếu tổng số trang lớn hơn 2 -->  
+                            <th:block th:if="${pagination.totalPages > 2}"  
+                                th:with="startPage=${pagination.currentPage == 1 ? 1 : (pagination.currentPage == pagination.totalPages ? pagination.currentPage - 2 : pagination.currentPage - 1)}, endPage=${pagination.currentPage == 1 ? pagination.currentPage + 2 : (pagination.currentPage == pagination.totalPages ? pagination.totalPages : pagination.currentPage + 1)}">  
+                                <!-- Hiển thị các trang từ startPage đến endPage -->  
+                                <th:block th:each="i : ${#numbers.sequence(startPage, endPage)}">  
+                                    <li class="page-item" th:class="${i == pagination.currentPage ? 'active' : ''}">  
+                                        <a class="page-link d-flex justify-content-center"  
+                                            th:href="@{|/list?action=${filter}&page=${i}&market=${market}&airline=${airline}|}"  
+                                            th:text="${i}"></a>  
+                                    </li>  
+                                </th:block>  
+                            </th:block>  
+
+                            <!-- Nếu tổng số trang nhỏ hơn hoặc bằng 2, hiển thị tất cả các trang -->  
+                            <th:block th:if="${pagination.totalPages <= 2}">  
+                                <th:block th:each="i : ${#numbers.sequence(1, pagination.totalPages)}">  
+                                    <li class="page-item" th:class="${i == pagination.currentPage ? 'active' : ''}">  
+                                        <a class="page-link d-flex justify-content-center"  
+                                            th:href="@{|/list?action=${filter}&page=${i}&market=${market}&airline=${airline}|}"  
+                                            th:text="${i}"></a>  
+                                    </li>  
+                                </th:block>  
+                            </th:block>  
+
+                            <!-- Nút tới trang tiếp theo -->  
+                            <li class="page-item"><a class="page-link"  
+                                th:class="${pagination.currentPage == pagination.totalPages ? 'disabled' : ''}"  
+                                th:href="@{|/list?action=${filter}&page=${pagination.nextPage}&market=${market}&airline=${airline}|}"  
+                                aria-label="Next"> <i class="fa-solid fa-forward"></i>  
+                            </a></li>  
+
+                            <!-- Nút tới trang cuối -->  
+                            <li class="page-item"><a class="page-link"  
+                                th:class="${pagination.currentPage == pagination.totalPages ? 'disabled' : ''}"  
+                                th:href="@{|/list?action=${filter}&page=${pagination.totalPages}&market=${market}&airline=${airline}|}"  
+                                aria-label="Last"> <i class="fa-solid fa-forward-step"></i>  
+                            </a></li>  
+                        </ul>  
+                    </nav>  
+                </div>  
+            </div>  
+
+            <!-- Footer -->  
+            <footer class="text-left pl-5 mt-3">  
+                <p>Copyright (C) 2002-2010 Abacus all right reserved</p>  
+            </footer>  
+        </div>  
+    </div>  
+
+    <!-- Liên kết các file JavaScript -->  
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>  
+    <script th:src="@{/js/jquery.validate.min.js}"></script>  
+    <script th:src="@{/js/filter-project-contract.js}"></script>  
+    <script th:src="@{/js/select2.min.js}"></script>  
+</body>  
+
+</html>
