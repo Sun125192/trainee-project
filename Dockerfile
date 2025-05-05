@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 RUN mvn clean package -DskipTests
-
+RUN ls -l /app/target
 
 # Run stage
 
